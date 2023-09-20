@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Youtbue 영상 재생</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #iframeBody {
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        width: 100vw;
+      }
+      #iframeBody > iframe {
+        margin: 0;
+        padding: 0;
+        width: 50vw;
+        height: 50vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="iframeBody"></div>
+  </body>
+  <script>
+    window.onload = () => {
+      const iframeQueryString = getQueryString("iframe");
+      const iframeBody = document.getElementById("iframeBody");
+      const youtbeUrls = iframeQueryString
+        .filter((query) => query.indexOf("youtube") != -1)
+        .map((query) => {
+          if(query.indexOf("?") != -1) {
+            query = query.substring(0, query.indexOf("?"));
+          }
+  
+          const iframeSrc = `${query}?autoplay=1&mute=1&controls=0&loop=1&playlist=${query.slice(
+            query.lastIndexOf("/") + 1
+          )}`;
+          
+          const iframe = document.createElement("iframe");
+          iframe.src = iframeSrc;
+          iframe.frameBorder = 0;
+          iframe.frameSpacing = 0;
+          iframeBody.append(iframe);
+
+          return query;
+        });
+        localStorage.setItem("youtube-urls", JSON.stringify(youtbeUrls));
+    };
+
+    const getQueryString = (key) =>
+      new URLSearchParams(location.search).getAll(key);
+  </script>
+</html>

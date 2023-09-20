@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Youtbue 영상 선택</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <style>
+      #iframeForm {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+      }
+      #iframeForm > div > input {
+        width: 70vw;
+      }
+      #layerpopup {
+        width: 25%;
+        height: 600px;
+        position: fixed;
+        left: 50%;
+        top: 30%;
+        margin-left: -12%;
+        margin-top: -200px;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
+        z-index: 100;
+      }
+      #layerpopup > * {
+        position: absolute;
+        justify-content: center;
+        align-items: center;
+      }
+      #layerpopup > div > button {
+        width: 50px;
+        height: 30px;
+        background-color: rgba(0,0,0,0);
+        margin-top: 500px;
+      }
+      #layerpopup > button:last-of-type { 
+        left: 65%;
+      }
+
+
+    </style>
+  </head>
+  <body>
+    <button onclick="addInput()">추가</button>
+    <button type="submit" form="iframeForm">동영상 보기</button>
+    <button id="layerPopupButton" onclick="viewPopup()">입력 url 찾는 방법(유튜브)</button>
+    <div id="layerpopup">
+      <div id="image1">
+        <img src = "images/layerpopup1.png">
+        <p>1. 공유 버튼 누르기</p>
+      </div>
+      <div id="image2" style="display: none;">
+        <img src = "images/layerpopup2.png">
+        <p>2. 퍼가기 버튼 누르기</p>
+      </div>
+      <div id="image3" style="display: none;">
+        <img src = "images/layerpopup3.png">
+        <p>3. 밑 줄 친 부분만 복사해서 url 입력</p>
+      </div>
+      <div>
+        <button onclick="left()"> &lt; </button>
+        <button onclick="right()"> &gt; </button>
+      </div>
+    </div>
+    <form id="iframeForm" action="view.html"></form>
+  </body>
+  <script>
+    let page = 1;
+    let flag = true;
+    window.onload = () => {
+      const youtubeUrls = JSON.parse(localStorage.getItem("youtube-urls"))
+      youtubeUrls ? youtubeUrls.forEach(url => addInputValue(url)) : addInput();
+    };
+    const addInput = () => {
+      addInputValue();
+    };
+
+    const addInputValue = (value) => {
+      const form = document.getElementById("iframeForm");
+      const div = document.createElement("div");
+
+      const span = document.createElement("span");
+      span.append("보고 싶은 url 입력 : ");
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.name = "iframe";
+      input.value = value ?? "";
+
+      div.append(span);
+      div.append(input);
+      form.append(div);
+    };
+
+    const viewPopup = () => {
+      let displayName = "none";
+      let buttonName = "입력 url 찾는 방법(유튜브)";
+      if(flag) {
+        displayName = "flex"; 
+        buttonName = "예시 팝업 끄기";
+      }
+      document.getElementById("layerpopup").style.display = displayName;
+      document.getElementById("layerPopupButton").innerText = buttonName;
+      flag = !flag;
+    };
+    const left = () => {
+      if(page == 1) retrun;
+      document.getElementById(`image${page}`).style.display = 'none';
+      --page;
+      document.getElementById(`image${page}`).style.display = 'unset';
+    }
+    const right = () => {
+      if(page == 3) retrun;
+      document.getElementById(`image${page}`).style.display = 'none';
+      ++page;
+      document.getElementById(`image${page}`).style.display = 'unset';
+
+    }
+
+  </script>
+</html>
